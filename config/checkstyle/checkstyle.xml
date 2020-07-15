@@ -5,10 +5,10 @@
     <!-- This configuration corresponds to the OFBiz coding conventions
         which are simply “Sun Coding Standards” + “120 characters line length” -->
     <module name="Checker">
-    <module name="BeforeExecutionExclusionFileFilter">
+    <!--<module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern" value="module\-info\.java$"/>
-    </module>
-    <property name="fileExtensions" value="java, properties, xml"/>
+    </module>-->
+    <!--<property name="fileExtensions" value="java, properties, xml"/>-->
 
     <!-- General file conventions -->
     <module name="NewlineAtEndOfFile"/>
@@ -67,7 +67,7 @@
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
-        <module name="SingleSpaceSeparator"/>
+        <!--<module name="SingleSpaceSeparator"/>-->
 
         <!-- Modifier Checks -->
             <module name="ModifierOrder"/>

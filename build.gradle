@@ -31,6 +31,7 @@ buildscript {
         classpath 'at.bxm.gradleplugins:gradle-svntools-plugin:2.2.1'
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8.1' // Rather than using 1.5.9.2 see OFBIZ-10693
         classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16'
+        classpath 'com.puppycrawl.tools:checkstyle:8.2'
     }
 }
 apply plugin: 'java'
@@ -59,16 +60,46 @@ javadoc.options {
     charSet "UTF-8"
 }
 // Checks OFBiz Java coding conventions.
-checkstyle {
+/*checkstyle {
+    toolVersion '8.2';
     // Defining a maximum number of “tolerated” errors ensures that
     // this number cannot increase in the future. It corresponds to
     // the sum of errors that were present before introducing the
     // ‘checkstyle’ tool present in the framework and in the official
     // plugins.
-    maxErrors = 38803
+    maxErrors 38731
     // Currently there are a lot of errors so we need to temporarily
     // hide them to avoid polluting the terminal output.
+    showViolations false
+}*/
+task checkstyle(type: Checkstyle) {
+    source "${project.rootDir}"
+    classpath = files()
+
+    // configFile rootProject.file('checkstyle.xml')
+    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    println "===================" + rootProject.file('checkstyle.xml')
+    println "===================" + file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+
     showViolations = false
+    ignoreFailures = true
+
+    // source 'src'
+    classpath = files()
+    def maxErrors = 40469
+    doLast {
+        println "===================" + reports
+        reports.all { report ->
+            def outputFile = report.destination
+            println "===================" + outputFile
+            if (outputFile.exists() && outputFile.getName().endsWith(".xml") ) {
+                def count = outputFile.text.count("<error ")
+                if (count > maxErrors) {
+                    throw new GradleException("There were $count checkstyle warnings! For more info check $outputFile")
+                }
+            }
+        }
+    }
 }
 
 sourceCompatibility = '1.8'
@@ -555,7 +586,7 @@ task generateReadmeFiles(group: docsGroup, type: AsciidoctorTask) {
     sourceDir "${rootDir}"
     sources {
         include 'README.adoc', 'CHANGELOG.adoc', 'CONTRIBUTING.adoc'
-      }    
+      }
     outputDir file("${buildDir}/asciidoc/readme/")
 }
 
